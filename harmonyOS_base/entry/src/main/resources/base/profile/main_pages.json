@@ -1,5 +1,16 @@
 {
   "src": [
-    "pages/Index"
+    "pages/Index",
+    "pages/02/counterCase",
+    "pages/02/styleCase",
+    "pages/02/imageCase",
+    "pages/02/ZhiHu",
+    "pages/02/stylesCaseOne",
+    "pages/02/extendCase",
+    "pages/02/extendCase",
+    "pages/02/stylesCase",
+    "pages/02/cordtionCase",
+    "pages/02/loadingCase",
+    "pages/02/forEachCase"
   ]
 }
