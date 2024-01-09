@@ -12,6 +12,10 @@
     "pages/02/cordtionCase",
     "pages/02/loadingCase",
     "pages/02/forEachCase",
-    "pages/03/builderCase"
+    "pages/03/builderCase",
+    "pages/03/builderParamCase",
+    "pages/03/builderCaseExample",
+    "pages/03/propCase",
+    "pages/03/linkCase"
   ]
 }
