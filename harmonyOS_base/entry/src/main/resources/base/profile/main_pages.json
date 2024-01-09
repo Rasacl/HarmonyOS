@@ -11,6 +11,7 @@
     "pages/02/stylesCase",
     "pages/02/cordtionCase",
     "pages/02/loadingCase",
-    "pages/02/forEachCase"
+    "pages/02/forEachCase",
+    "pages/03/builderCase"
   ]
 }
