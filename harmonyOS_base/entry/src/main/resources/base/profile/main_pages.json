@@ -16,6 +16,17 @@
     "pages/03/builderParamCase",
     "pages/03/builderCaseExample",
     "pages/03/propCase",
-    "pages/03/linkCase"
+    "pages/03/linkCase",
+    "pages/04/ProvideConsumeCase",
+    "pages/04/WacthCase",
+    "pages/04/ObservedObjectLinkCase",
+    "pages/04/zhihuCase",
+    "pages/04/MultilayerNesting",
+    "pages/04/LocalStroageCase",
+    "pages/04/LocalStorageCase2",
+    "pages/04/AppStorageCase",
+    "pages/04/AppStorageCase1",
+    "pages/04/PersistentStorageCase",
+    "pages/04/httpCase"
   ]
 }
