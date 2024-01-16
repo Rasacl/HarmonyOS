@@ -27,6 +27,7 @@
     "pages/04/AppStorageCase",
     "pages/04/AppStorageCase1",
     "pages/04/PersistentStorageCase",
-    "pages/04/httpCase"
+    "pages/04/httpCase",
+    "pages/05/MTIndex"
   ]
 }
