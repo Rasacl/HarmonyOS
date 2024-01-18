@@ -26,11 +26,21 @@ struct MTIndex {
   @State showCar:boolean = false
   @State
   categoryList: Category[] = []
+  @StorageLink('user_cart')
+  @Watch('updateCartJson')  //第一次不生效
+  cartJSon: string = ''
+  @Provide cartList:FoodItem[] = []
   //获取数据，将数据进行动态渲染
   aboutToAppear(){
     //获取美团的餐饮数据
     this.getAllData()
+    this.updateCartJson()
   }
+  updateCartJson(){
+    // 此时更新购物车
+    this.cartList = getCart()
+  }
+
   async getAllData () {
     try {
       const req = http.createHttp()
@@ -108,13 +118,20 @@ struct MTMain {
 @Component
 struct MTBottom {
   @Link showCar:boolean
+  @Consume cartList:FoodItem[]
+  getAllCount () {
+    return this.cartList.reduce((preValue, item) => preValue + item.count, 0).toString()
+  }
+  getAllPrice () {
+    return this.cartList.reduce((preValue, item) => preValue + item.count * item.price, 0).toFixed(2)
+  }
   build() {
     Row(){
       Row(){
         //徽标组件
         Badge(
           {
-            value:'0',
+            value:this.getAllCount(),
             position:BadgePosition.Right,
             style:{
                badgeSize:18
@@ -141,7 +158,7 @@ struct MTBottom {
           Text(){
             Span('￥')
               .fontColor('#fff')
-            Span('0.00')
+            Span(this.getAllPrice())
               .fontSize(24)
               .fontColor('#fff')
           }
@@ -187,6 +204,7 @@ struct MTBottom {
 //购物车组件
 @Component
 struct MTCar {
+  @Consume cartList:FoodItem[]
   build() {
     Column(){
       //顶部标题
@@ -196,6 +214,9 @@ struct MTCar {
         Text('清空购物车')
           .fontSize(12)
           .fontColor('#999')
+          .onClick(() => {
+            AppStorage.Set<string>('user_cart', '[]')
+          })
       }
       .width('100%')
       .height(40)
@@ -212,17 +233,16 @@ struct MTCar {
       .justifyContent(FlexAlign.SpaceBetween)
 
       List({space:30}){
-        ListItem(){
-          MTcarItem()
-        }
-        ListItem(){
-          MTcarItem()
-        }
-        ListItem(){
-          MTcarItem()
-        }
+        ForEach(this.cartList, (item:FoodItem) => {
+          ListItem(){
+            MTcarItem({ item })
+          }
+        })
 
       }
+      .padding({
+        bottom:70
+      })
     }
     .height('50%')
     .width('100%')
@@ -232,9 +252,10 @@ struct MTCar {
 
 @Component
 struct MTcarItem {
+  item: Partial<FoodItem> = {}
   build() {
     Row(){
-      Image('https://zqran.gitee.io/images/waimai/8078956697.jpg')
+      Image(this.item.picture)
         .width(60)
         .aspectRatio(1)
         .borderRadius(8)
@@ -242,7 +263,7 @@ struct MTcarItem {
           right:10
          })
       Column(){
-        Text('大饼卷米饭韭菜')
+        Text(this.item.name)
           .fontSize(14)
           .textOverflow({
             overflow:TextOverflow.Ellipsis
@@ -253,13 +274,13 @@ struct MTcarItem {
             Span('￥')
               .fontSize(12)
               .fontColor('#ff8000')
-            Span('32.33')
+            Span(this.item.price.toFixed(2))
               .fontSize(18)
               .fontColor('#ff8000')
               .fontWeight(FontWeight.Bold)
           }
 
-          MTAddCut()
+          MTAddCut({foodItem:this.item})
         }
         .justifyContent(FlexAlign.SpaceBetween)
         .width('100%')
@@ -395,7 +416,12 @@ struct MTFoodItem {
 // 加减组件
 @Component
 struct MTAddCut {
+  @Consume cartList:FoodItem[]
   foodItem:Partial<FoodItem> = {}
+
+  getCount():number{
+    return this.cartList.find(item => item.id === this.foodItem.id)?.count || 0
+  }
   build() {
     Row({space:8}){
       Row(){
@@ -412,9 +438,14 @@ struct MTAddCut {
         width:0.5,
         color:'#f8c74e'
       })
+      .visibility(this.getCount() ? Visibility.Visible : Visibility.Hidden )
+      .onClick(() => {
+        addCutCart('cut', this.foodItem as FoodItem)
+      })
 
-      Text('0')
+      Text(this.getCount().toString())
         .fontSize(14)
+        .visibility(this.getCount() ? Visibility.Visible : Visibility.Hidden )
 
       Row(){
         Image($r('app.media.ic_public_add_filled'))
