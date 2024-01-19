@@ -36,6 +36,15 @@
             ]
           }
         ]
+      },
+      {
+        "name": "PlayAbility",
+        "srcEntry": "./ets/playability/PlayAbility.ts",
+        "description": "$string:PlayAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:PlayAbility_label",
+        "startWindowIcon": "$media:icon",
+        "startWindowBackground": "$color:start_window_background"
       }
     ]
   }

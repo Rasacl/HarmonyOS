@@ -28,6 +28,10 @@
     "pages/04/AppStorageCase1",
     "pages/04/PersistentStorageCase",
     "pages/04/httpCase",
-    "pages/05/MTIndex"
+    "pages/05/MTIndex",
+    "pages/06/RouterList",
+    "pages/06/RouterDetil",
+    "pages/06/play/playIndex",
+    "pages/06/main/mainPage"
   ]
 }
