@@ -40,6 +40,7 @@
     "pages/07/DouyinCase",
     "pages/MainNav",
     "pages/08/CanvasCase",
-    "pages/08/GuessCanvas"
+    "pages/08/GuessCanvas",
+    "pages/08/PreferencesCase"
   ]
 }
