@@ -1,0 +1,27 @@
+{
+  "module": {
+    "name": "Test_ability",
+    "type": "feature",
+    "description": "$string:module_desc",
+    "mainElement": "Test_abilityAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "Test_abilityAbility",
+        "srcEntry": "./ets/test_abilityability/Test_abilityAbility.ts",
+        "description": "$string:Test_abilityAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:Test_abilityAbility_label",
+        "startWindowIcon": "$media:icon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true
+      }
+    ]
+  }
+}

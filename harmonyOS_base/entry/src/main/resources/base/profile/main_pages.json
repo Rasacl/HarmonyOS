@@ -32,6 +32,13 @@
     "pages/06/RouterList",
     "pages/06/RouterDetil",
     "pages/06/play/playIndex",
-    "pages/06/main/mainPage"
+    "pages/06/main/mainPage",
+    "pages/07/animationIndex",
+    "pages/07/AnimationToCase",
+    "pages/07/ACase",
+    "pages/07/VideoCase",
+    "pages/07/DouyinCase",
+    "pages/MainNav",
+    "pages/08/CanvasCase"
   ]
 }

@@ -22,6 +22,18 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Test_ability",
+      "srcPath": "./Test_ability",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }
