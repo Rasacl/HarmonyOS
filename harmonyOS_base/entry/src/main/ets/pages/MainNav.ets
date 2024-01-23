@@ -17,7 +17,7 @@ struct MainNav {
     },
     {
       title: '你画我猜案例',
-      url: ''
+      url: "pages/08/GuessCanvas"
     },
     {
       title: '聊天机器人',
