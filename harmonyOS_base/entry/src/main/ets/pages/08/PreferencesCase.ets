@@ -2,6 +2,8 @@ import preferences from '@ohos.data.preferences'
 import http from '@ohos.net.http'
 import util from '@ohos.util'
 import promptAction from '@ohos.promptAction'
+import notificationManager from '@ohos.notificationManager'
+import wantAgent from '@ohos.app.ability.wantAgent'
 
 @Entry
 @Component
@@ -15,6 +17,7 @@ struct ChatMessage {
   scroller: Scroller = new Scroller()
   @State
   sendIng: boolean = false
+  @State topY:number = 0
 
   aboutToAppear() {
     this.getMess()
@@ -49,6 +52,38 @@ struct ChatMessage {
     const result = JSON.parse(res.result as string) as ResultClass
     this.sendIng = false
     if (result.result === 0) {
+      let wantAgentInfo = {
+        wants: [
+          {
+            deviceId: '',
+            bundleName: 'com.example.harmonyos_base', //包名
+            abilityName: 'Test_abilityAbility',
+            moduleName:'Test_ability', // 模块名称
+            parameters: {
+              order_id:Date.now()
+            }
+          }
+        ],
+        operationType: wantAgent.OperationType.START_ABILITY,
+        requestCode: 0,
+        // wantAgentFlags:[wantAgent.WantAgentFlags.CONSTANT_FLAG]
+      }
+      // 需要声明wantAgent对象
+      let wantAgentObj = await wantAgent.getWantAgent(wantAgentInfo)
+      //给手机应用发送一条通知
+      let req: notificationManager.NotificationRequest = {
+        id:Date.now(),
+        content:{
+          contentType:notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+          normal: {
+            title: '你一条新的消息',
+            text: result.content,
+            additionalText: '如花的信息',
+          }
+        },
+        wantAgent: wantAgentObj,
+      }
+      notificationManager.publish(req)
       // 回复成功
       let message: MessageItem = {
         id: util.generateRandomUUID(),
@@ -72,7 +107,7 @@ struct ChatMessage {
     Stack({ alignContent: Alignment.Bottom }) {
       Column() {
         Row() {
-          Text("🙉 老婆大人")
+          Text("🙉 大哥")
             .fontSize(18)
         }
         .width('100%')
@@ -95,7 +130,9 @@ struct ChatMessage {
           bottom: 80
         })
         .layoutWeight(1)
-      }.height('100%')
+      }.height('100%').position({
+        y:this.topY
+      })
 
       // 消息列表
       Row({ space: 20 }) {
@@ -145,6 +182,9 @@ struct ChatMessage {
         right: 10
       })
     }
+    .onAreaChange((oldArea:Area, newArea:Area) => {
+      this.topY = Math.abs(parseFloat(newArea.globalPosition.y.toString()))
+    })
     .backgroundColor('#ededed')
     .height('100%')
   }
