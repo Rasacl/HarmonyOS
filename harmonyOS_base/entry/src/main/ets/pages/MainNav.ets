@@ -21,8 +21,17 @@ struct MainNav {
     },
     {
       title: '聊天机器人',
-      url: ''
-    }]
+      url: 'pages/08/PreferencesCase'
+    },
+    {
+      title: '发布闹铃',
+      url: 'pages/09/ClockCase'
+    },
+    {
+      title: '华为时钟',
+      url: "pages/09/huaweiClock"
+    }
+  ]
 
   build() {
     List({ space: 20 }) {

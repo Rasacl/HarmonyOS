@@ -41,6 +41,9 @@
     "pages/MainNav",
     "pages/08/CanvasCase",
     "pages/08/GuessCanvas",
-    "pages/08/PreferencesCase"
+    "pages/08/PreferencesCase",
+    "pages/09/ClockCase",
+    "pages/09/huaweiClock",
+    "pages/09/AddClock"
   ]
 }
