@@ -6,11 +6,11 @@
     },
     {
       "name": "EntryAbility_desc",
-      "value": "神领物流是一款用于司机提货、交货、回车登记的应用"
+      "value": "description"
     },
     {
       "name": "EntryAbility_label",
-      "value": "神领物流"
+      "value": "label"
     }
   ]
 }
