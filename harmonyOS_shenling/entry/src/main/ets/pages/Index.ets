@@ -1,3 +1,4 @@
+// 负责存放所有的页面
 @Entry
 @Component
 struct Index {
@@ -9,6 +10,7 @@ struct Index {
         Text(this.message)
           .fontSize(50)
           .fontWeight(FontWeight.Bold)
+          .fontColor($r('app.color.primary_disabled'))
       }
       .width('100%')
     }
