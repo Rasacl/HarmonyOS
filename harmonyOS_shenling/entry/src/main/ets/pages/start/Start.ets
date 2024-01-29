@@ -33,7 +33,7 @@ struct Start {
     if(AppStorage.Get(TOKEN_KEY)){
       // 有token
       router.replaceUrl({
-        url:'pages/Index'
+        url:'pages/index/Index'
       })
     }else {
       router.replaceUrl({

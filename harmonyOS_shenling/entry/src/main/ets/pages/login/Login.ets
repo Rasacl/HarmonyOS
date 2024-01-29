@@ -37,7 +37,7 @@ struct Login {
       new UserSettingClass(getContext(this)).setUserToken(token)
       this.showLoading = false
       router.replaceUrl({
-        url: 'pages/Index'
+        url: 'pages/index/Index'
       })
     }catch (error){
     }
