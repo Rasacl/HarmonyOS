@@ -1,3 +1,4 @@
 //  负责存放所有的数据类型结构
 
-export * from './advert'  // 广告数据类型
+export * from './advert' // 广告数据类型
+export * from './user' //账号数据模型

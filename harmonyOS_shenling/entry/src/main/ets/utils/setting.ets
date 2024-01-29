@@ -1,7 +1,7 @@
 // 用首选项读取广告，设置广告
 import preferences from '@ohos.data.preferences';
-import { USER_SETTING, USER_SETTING_AD } from '../constants'
-import { AdvertClass } from '../models/advert';
+import { USER_SETTING, USER_SETTING_AD, TOKEN_KEY } from '../constants'
+import { AdvertClass } from '../models';
 //用户广告只是用户设置的一种-还可以设置用户的其他行为
 
 //默认的广告配置
@@ -32,5 +32,18 @@ export class UserSettingClass{
     await adStore.put(USER_SETTING_AD, JSON.stringify(ad))
     // 写入磁盘
     await adStore.flush()
+  }
+
+  // 读取token
+  async getUserToken():Promise<string>{
+    const tokenStore = await this.getStore()
+    return await tokenStore.get(TOKEN_KEY, '') as string
+  }
+
+  // 设置token
+  async setUserToken(token:string){
+    const tokenStore = await this.getStore()
+    await tokenStore.put(TOKEN_KEY, token)
+    await tokenStore.flush()
   }
 }
