@@ -1,4 +1,8 @@
+import { login } from '../../api'
+import { TOKEN_KEY } from '../../constants'
 import { LoginFormModel } from '../../models'
+import { UserSettingClass } from '../../utils'
+import router from '@ohos.router'
 @Entry
 @Component
 struct Login {
@@ -24,6 +28,23 @@ struct Login {
     }
     return false
   }
+  
+  async login(){
+    try {
+      this.showLoading = true
+      const token = await login(this.accountForm)
+      AppStorage.Set<string>(TOKEN_KEY, token)
+      new UserSettingClass(getContext(this)).setUserToken(token)
+      this.showLoading = false
+      router.replaceUrl({
+        url: 'pages/Index'
+      })
+    }catch (error){
+    }
+    finally {
+      this.showLoading = false
+    }
+  }
 
   build() {
     Column() {
@@ -47,6 +68,11 @@ struct Login {
         .onChange((value) => {
           this.accountForm.account = value
         })
+        .onSubmit(() => {
+          if(this.getFormValidate()){
+            this.login()
+          }
+        })
 
       // 密码框
       TextInput({ placeholder: '请输入密码', text:this.accountForm.password })
@@ -56,6 +82,11 @@ struct Login {
         .onChange((value) => {
           this.accountForm.password = value
         })
+        .onSubmit(() => {
+          if(this.getFormValidate()){
+            this.login()
+          }
+        })
 
       // 登录按钮
       Button({ type: ButtonType.Capsule, stateEffect: this.getFormValidate() }) {
@@ -63,7 +94,11 @@ struct Login {
           if(this.showLoading){
             LoadingProgress().width(20).height(20).margin({ right: 12 }).color($r('app.color.white'))
           }
-          Text('登录').fontColor($r('app.color.white'))
+          Text('登录')
+            .fontColor($r('app.color.white'))
+            .onClick(() => {
+              this.login()
+            })
         }
       }
       .backgroundColor(this.getFormValidate() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
