@@ -1,6 +1,7 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import hilog from '@ohos.hilog';
 import window from '@ohos.window';
+import { TOKEN_KEY } from '../constants/token_key';
 import { AdvertClass } from '../models/advert';
 import { UserSettingClass } from '../utils/setting';
 
@@ -36,7 +37,11 @@ export default class EntryAbility extends UIAbility {
       // 去广告页
       windowStage.loadContent('pages/start/Start');
     } else {
-      windowStage.loadContent('pages/Index');
+      if(AppStorage.Get(TOKEN_KEY)){
+        windowStage.loadContent('pages/Index');
+      }else {
+        windowStage.loadContent('pages/login/Login');
+      }
     }
   }
 

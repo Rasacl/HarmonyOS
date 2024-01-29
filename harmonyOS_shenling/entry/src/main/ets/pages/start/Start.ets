@@ -1,6 +1,8 @@
-import { AdvertClass } from '../../models/advert'
-import { UserSettingClass } from '../../utils/setting'
+import { AdvertClass } from '../../models'
+import { UserSettingClass } from '../../utils'
 import router from '@ohos.router'
+import { TOKEN_KEY } from '../../constants'
+PersistentStorage.PersistProp(TOKEN_KEY, '')
 @Entry
 @Component
 struct Start {
@@ -16,9 +18,7 @@ struct Start {
     this.timer = setInterval(() => {
       if(this.adObj.adTime === 0){
         clearInterval(this.timer)
-        router.replaceUrl({
-          url:'pages/Index'
-        })
+       this.toNext()
         return
       }
       this.adObj.adTime--
@@ -26,6 +26,20 @@ struct Start {
   }
   aboutToDisappear(){
     clearInterval(this.timer)
+  }
+
+  // 根据token判断是否需要去登录页
+  toNext(){
+    if(AppStorage.Get(TOKEN_KEY)){
+      // 有token
+      router.replaceUrl({
+        url:'pages/Index'
+      })
+    }else {
+      router.replaceUrl({
+        url:'pages/login/Login'
+      })
+    }
   }
 
   build() {
@@ -48,9 +62,7 @@ struct Start {
         .backgroundColor($r('app.color.background_page'))
         .textAlign(TextAlign.Center)
         .onClick(() => {
-          router.replaceUrl({
-            url:'pages/Index'
-          })
+          this.toNext()
         })
     }
     .width('100%')
