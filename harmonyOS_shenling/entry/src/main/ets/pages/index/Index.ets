@@ -1,6 +1,7 @@
 // 负责存放所有的页面
 import { TOKEN_KEY } from '../../constants'
 import { TabClass } from '../../models'
+import My from './my/My'
 PersistentStorage.PersistProp(TOKEN_KEY, '')
 @Entry
 @Component
@@ -42,7 +43,7 @@ struct Index {
           }else if(item.name === 'message'){
             Text('消息')
           }else {
-            Text('我的')
+            My()
           }
         }
         .tabBar(this.getTabBar(item))

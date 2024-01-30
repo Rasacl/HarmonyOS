@@ -9,8 +9,8 @@ struct Login {
   @State showLoading:boolean = false
   @State
   accountForm: LoginFormModel = new LoginFormModel({
-    account: '',
-    password: ''
+    account: 'chenxiao',
+    password: '214216'
   })
   @Styles
   inputStyle() {
