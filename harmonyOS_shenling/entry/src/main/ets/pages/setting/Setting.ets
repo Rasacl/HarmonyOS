@@ -1,8 +1,38 @@
-import { CardItem, Card, NavBar } from '../../components'
+import { CardItem, Card, NavBar, Confirm } from '../../components'
+import { TOKEN_KEY } from '../../constants'
+import { UserSettingClass } from '../../utils'
+import router from '@ohos.router'
 @Entry
 @Component
 struct Setting {
-  @State message: string = 'Hello World'
+  confirm:CustomDialogController = new CustomDialogController({
+    builder: Confirm(
+      {
+        message: '确定要退出登录吗?',
+        buttonList: [{
+          text: '取消'
+        },{
+          text: '确定',
+          fontColor: $r('app.color.primary'),
+          action: () => {
+            this.logout()
+          }
+        }]
+      }
+    ) ,//结构 CustomBuilder结构 可以穿组件结构
+    alignment:DialogAlignment.Center,
+    autoCancel:false,
+    customStyle:true //自由设置样式-builder里面的样式才不会受到影响
+  })
+
+  logout () {
+    // 删除token
+    AppStorage.Set<string>(TOKEN_KEY, "")
+    new UserSettingClass(getContext(this)).setUserToken("")
+    router.replaceUrl({
+      url: 'pages/login/Login'
+    })
+  }
 
   build() {
     Column(){
@@ -20,6 +50,9 @@ struct Setting {
           .width('100%')
           .borderRadius(8)
           .height(60)
+          .onClick(() => {
+            this.confirm.open() // 打开弹层
+          })
       }
       .width('100%')
       .margin({

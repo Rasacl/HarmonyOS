@@ -2,3 +2,4 @@
 export * from './Card'
 export * from './CardItem'
 export * from './NavBar'
+export * from './Confirm'
