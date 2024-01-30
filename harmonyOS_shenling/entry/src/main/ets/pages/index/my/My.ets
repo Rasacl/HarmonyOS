@@ -1,16 +1,29 @@
-import { getUserInfo } from '../../../api'
+import { getUserInfo, getUserTaskInfo } from '../../../api'
 import { Card, CardItem } from '../../../components'
-import { UserInfoModel, UserInfo } from '../../../models'
+import { UserInfoModel, UserInfo, UserTaskInfoModel, UserTaskInfo,UserTaskInfoParamsModel } from '../../../models'
+import router from '@ohos.router'
 @Preview
 @Component
 struct My {
   @State userInfo:UserInfoModel = new UserInfoModel({} as UserInfo)
+  @State userTaskInfo:UserTaskInfoModel = new UserTaskInfoModel({} as UserTaskInfo)
+  queryTaskParams:UserTaskInfoParamsModel = new UserTaskInfoParamsModel({
+    year: new Date().getFullYear().toString(),
+    month:(new Date().getMonth() + 1).toString()
+  })
   aboutToAppear(){
     this.getUserInfo()
+    this.getUserTaskInfo()
   }
 
+  // 获取用户的个人信息
   async getUserInfo(){
     this.userInfo = await getUserInfo()
+  }
+
+  // 获取用户的任务数据
+  async getUserTaskInfo() {
+    this.userTaskInfo = await getUserTaskInfo(this.queryTaskParams)
   }
   build() {
     Column(){
@@ -55,14 +68,14 @@ struct My {
         Text("- 本月任务 -").fontSize(14).fontColor($r('app.color.text_secondary')).lineHeight(20)
         Row() {
           Column() {
-            Text("1000").fontSize(18).fontColor($r('app.color.text_primary')).lineHeight(25).margin({
+            Text(this.userTaskInfo.taskAmounts?.toString() || '').fontSize(18).fontColor($r('app.color.text_primary')).lineHeight(25).margin({
               bottom: 17
             })
             Text("任务总量").fontSize(12).fontColor($r('app.color.text_primary')).lineHeight(17)
           }.justifyContent(FlexAlign.SpaceAround).layoutWeight(1)
 
           Column() {
-            Text("1000")
+            Text(this.userTaskInfo.completedAmounts?.toString() || '')
               .fontSize(18)
               .fontColor($r('app.color.text_primary'))
               .lineHeight(25)
@@ -71,7 +84,7 @@ struct My {
           }.justifyContent(FlexAlign.SpaceAround).layoutWeight(1)
 
           Column() {
-            Text("1000")
+            Text(this.userTaskInfo.transportMileage?.toString() || '')
               .fontSize(18)
               .fontColor($r('app.color.text_primary'))
               .lineHeight(25)
@@ -91,7 +104,11 @@ struct My {
         Card(){
           CardItem({ leftTitle: '车辆信息', rightText: '' })
           CardItem({ leftTitle: '任务设置', rightText: '' })
-          CardItem({ leftTitle: '系统设置', rightText: '', showBottomBorder: false })
+          CardItem({ leftTitle: '系统设置', rightText: '', showBottomBorder: false, onRightClick:() => {
+            router.pushUrl({
+              url:'pages/setting/Setting'
+            })
+          } })
 
         }
 
