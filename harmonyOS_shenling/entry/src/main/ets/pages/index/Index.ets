@@ -1,6 +1,7 @@
 // 负责存放所有的页面
 import { TOKEN_KEY } from '../../constants'
 import { TabClass } from '../../models'
+import TaskTabs from './task/TaskTabs'
 import My from './my/My'
 PersistentStorage.PersistProp(TOKEN_KEY, '')
 @Entry
@@ -39,7 +40,7 @@ struct Index {
       ForEach(this.tabsData, (item:TabClass) => {
         TabContent(){
           if(item.name === 'task'){
-            Text('任务')
+           TaskTabs()
           }else if(item.name === 'message'){
             Text('消息')
           }else {
