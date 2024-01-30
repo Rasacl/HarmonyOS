@@ -1,4 +1,4 @@
-import { CardItem, Card } from '../../components'
+import { CardItem, Card, NavBar } from '../../components'
 @Entry
 @Component
 struct Setting {
@@ -6,6 +6,7 @@ struct Setting {
 
   build() {
     Column(){
+      NavBar({ title: '系统设置' })
       Card(){
         CardItem({ leftTitle: '换绑手机', rightText: '' })
         CardItem({ leftTitle: '修改密码', rightText: '' })

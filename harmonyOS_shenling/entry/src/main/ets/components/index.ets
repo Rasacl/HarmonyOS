@@ -1,3 +1,4 @@
 //负责放置所有的公共组件
 export * from './Card'
 export * from './CardItem'
+export * from './NavBar'
