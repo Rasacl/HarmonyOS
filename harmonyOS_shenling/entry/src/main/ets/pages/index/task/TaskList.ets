@@ -1,7 +1,7 @@
 import { getTaskList } from '../../../api'
 import { TaskInfoItem, TaskListParams, TaskListParamsModel, TaskTypeEnum } from '../../../models'
 import TaskItemCard  from './TaskItemCard'
-import promptAction from '@ohos.promptAction'
+import {Loading} from '../../../components'
 @Preview
 @Component
 struct TaskList {
@@ -25,6 +25,23 @@ struct TaskList {
     this.allPage = result.pages // 赋值总页数
     this.queryParams.page++ // 页码+1
   }
+  @Builder getBottomDisplay(){
+    Row({ space: 10 }) {
+      if (this.loading) {
+        Text(this.allPage < this.queryParams.page ? "已经没有内容拉" : "加载数据中")
+          .fontSize(14)
+          .fontColor($r("app.color.text_secondary"))
+        if(this.allPage >= this.queryParams.page) {
+          Loading({
+            hWidth: 20
+          })
+        }
+      }
+    }
+    .height(50)
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
   build() {
     List(){
       ForEach(this.taskListData, (item:TaskInfoItem) => {
@@ -32,7 +49,9 @@ struct TaskList {
           TaskItemCard({taskItemData:item})
         }
       })
-      ListItem() //Next版本不需要加ListItem依然可以触发onReachEnd
+      ListItem() {
+        this.getBottomDisplay() // 底部显示内容
+      }//Next版本不需要加ListItem依然可以触发onReachEnd
     }
     .onReachEnd(async () => {
       // 进行分页加载 还没有加载完的情况下还可以继续加载，如果加载完成就不能在继续加载了
@@ -40,12 +59,8 @@ struct TaskList {
         if(!this.loading){
           this.loading = true
           await this.getTaskList()
-          this.loading = false
+          this.loading = this.allPage < this.queryParams.page ? true : false // 如果请求完了 判断一下 是不是已经没有数据了
         }
-      }else {
-        promptAction.showToast({
-          message:'到底啦😀😀😀'
-        })
       }
     })
   }
