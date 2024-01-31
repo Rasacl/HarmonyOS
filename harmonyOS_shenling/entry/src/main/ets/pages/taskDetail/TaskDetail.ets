@@ -1,7 +1,8 @@
-import {NavBar, ToggleCard, Upload} from '../../components'
+import { NavBar, ToggleCard, Upload } from '../../components'
 import router from '@ohos.router'
-import { CommonRouterParams,TaskDetailInfoModel,TaskDetailInfo } from '../../models'
+import { CommonRouterParams, TaskDetailInfo, TaskDetailInfoModel } from '../../models'
 import { getTaskDetail } from '../../api'
+
 @Entry
 @Component
 struct TaskDetail {
@@ -126,33 +127,66 @@ struct TaskDetail {
     })
   }
   //提货信息结构
-  @Builder getPickUpContent(){
-    Upload({title:'请拍照上传货品凭证'})
-    Upload({title:'请拍照上传货品照片'})
+  @Builder getPickUpContent() {
+    Upload({ title: '请拍照上传货品凭证' })
+    Upload({ title: '请拍照上传货品照片' })
   }
+
+  // 底部按钮结构
+  @Builder
+  getBottomBtn() {
+    //已完成不显示任何按钮
+    Row() {
+      Button("延迟收货", { type: ButtonType.Capsule })
+        .backgroundColor($r('app.color.btn_gray'))
+        .fontColor($r('app.color.text_primary'))
+        .fontSize(16)
+        .height(50)
+        .width(125)
+      Button("提货", { type: ButtonType.Capsule })
+        .backgroundColor($r('app.color.primary_disabled'))
+        .fontColor($r('app.color.white'))
+        .height(50)
+        .flexGrow(1)
+        .margin({ left: 13 })
+    }
+    .width('100%')
+    .padding({ left: 15, right: 15 })
+    .height(70)
+    .justifyContent(FlexAlign.SpaceBetween)
+    .alignItems(VerticalAlign.Center)
+    .backgroundColor($r('app.color.white'))
+    .position({ y: '100%' })
+    .translate({ y: -70 })
+  }
+
   build() {
-    Column(){
-      NavBar({title:'任务详情'})
-      Scroll(this.scroll){
+    Column() {
+      NavBar({ title: '任务详情' })
+      Scroll(this.scroll) {
         //scroll里面只有一个组件
-        Column(){
-          ToggleCard({title:'基本信息'}){
-           this.getBaseContent()
+        Column() {
+          ToggleCard({ title: '基本信息' }) {
+            this.getBaseContent()
           }
-          ToggleCard({title:'车辆司机信息'}){
+
+          ToggleCard({ title: '车辆司机信息' }) {
             this.getDriverContent()
           }
           ToggleCard({title:'运输路线'}){
             this.getTransLineContent()
           }
-          ToggleCard({title:'提货信息'}){
-           this.getPickUpContent()
+
+          ToggleCard({ title: '提货信息' }) {
+            this.getPickUpContent()
           }
         }
         .padding({
-          bottom:120
+          bottom: 130
         })
       }
+
+      this.getBottomBtn() // 底部按钮结构
     }
     .backgroundColor($r('app.color.background_page'))
     .height('100%')
