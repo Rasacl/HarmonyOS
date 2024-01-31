@@ -2,6 +2,8 @@ import picker from '@ohos.file.picker'
 import fs from '@ohos.file.fs'
 import util from '@ohos.util'
 import request from '@ohos.request'
+import { uploadImage } from '../api'
+
 @Preview
 @Component
 struct Upload {
@@ -43,6 +45,7 @@ struct Upload {
             type: 'jpg'
           })
         })
+        uploadImage(getContext(this), files)
       } catch (err){
         AlertDialog.show({
           message: err.message
