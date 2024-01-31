@@ -1,16 +1,20 @@
 import {NavBar} from '../../components'
 import router from '@ohos.router'
-import { CommonRouterParams } from '../../models'
+import { CommonRouterParams,TaskDetailInfoModel,TaskDetailInfo } from '../../models'
+import { getTaskDetail } from '../../api'
 @Entry
 @Component
 struct TaskDetail {
+  @State taskDetailData:TaskDetailInfoModel = new TaskDetailInfoModel({} as TaskDetailInfo)
   aboutToAppear(){
     const params = router.getParams() as CommonRouterParams
     if(params && params.id){
-      AlertDialog.show({
-        message: params.id
-      })
+      this.getTaskDetail(params.id)
     }
+  }
+
+  async getTaskDetail(id:string){
+    this.taskDetailData = await getTaskDetail(id)
   }
   build() {
     Column(){

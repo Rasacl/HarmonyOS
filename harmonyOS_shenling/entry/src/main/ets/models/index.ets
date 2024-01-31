@@ -5,6 +5,7 @@ export * from './user' //账号数据模型
 export * from './tab'
 export * from './task'
 export * from './router'
+export * from './task_detail'
 
 // 统一的类型工具 用来处理所有接口的返回类型
 export class ResponseData<T> {
