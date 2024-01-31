@@ -1,4 +1,5 @@
 import { TaskInfoItemModel, TaskInfoItem } from '../../../models'
+import router from '@ohos.router'
 @Preview
 @Component
 struct TaskItemCard {
@@ -11,6 +12,14 @@ struct TaskItemCard {
     }else {
       return false
     }
+  }
+  toPickUp(){
+    router.pushUrl({
+      url:'pages/taskDetail/TaskDetail',
+      params:{
+        id: this.taskItemData.id
+      }
+    })
   }
   build() {
     Column() {
@@ -70,6 +79,9 @@ struct TaskItemCard {
           .fontSize(14)
           .height(32)
           .enabled(this.getBtnEnable())
+          .onClick(() => {
+            this.toPickUp()
+          })
 
       }.justifyContent(FlexAlign.SpaceBetween).width('100%')
     }
