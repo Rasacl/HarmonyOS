@@ -1,7 +1,19 @@
+import picker from '@ohos.file.picker'
 @Preview
 @Component
 struct Upload {
   title:string = ''
+  maxNumber:number = 3
+  // 弹出相册选择器
+  async selectImage(){
+    const photoPicker = new picker.PhotoViewPicker()
+    const result = await photoPicker.select({
+      MIMEType:picker.PhotoViewMIMETypes.IMAGE_TYPE,
+      maxSelectNumber:this.maxNumber
+    })
+
+
+  }
   build() {
     Column(){
       Text(this.title)
@@ -22,6 +34,9 @@ struct Upload {
       .backgroundColor($r('app.color.gray_1'))
       .borderRadius(4)
       .justifyContent(FlexAlign.Center)
+      .onClick(() => {
+        this.selectImage()
+      })
     }
     .width('100%')
     .alignItems(HorizontalAlign.Start)
