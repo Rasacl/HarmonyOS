@@ -7,6 +7,14 @@ import { getTaskDetail } from '../../api'
 @Component
 struct TaskDetail {
   @State taskDetailData:TaskDetailInfoModel = new TaskDetailInfoModel({} as TaskDetailInfo)
+  // 提货凭证
+  @State
+  @Watch('updateCargoPickUp')
+  cargoPickUpClass:UploadClass = new UploadClass()
+  // 提货图片
+  @State
+  @Watch('updateCargo')  // 这是子传父
+  cargoClass:UploadClass = new UploadClass()
   scroll:Scroller = new Scroller()  // 属于外力控制
   aboutToAppear(){
     const params = router.getParams() as CommonRouterParams
@@ -14,9 +22,26 @@ struct TaskDetail {
       this.getTaskDetail(params.id)
     }
   }
+  updateCargoPickUp () {
+    this.taskDetailData.cargoPickUpPictureList = this.cargoPickUpClass.images
+  }
+  updateCargo() {
+    this.taskDetailData.cargoPictureList = this.cargoClass.images
+  }
 
   async getTaskDetail(id:string){
     this.taskDetailData = await getTaskDetail(id)
+    //将获取的详情的数据更新到子组件的class 这是父传子
+    this.cargoPickUpClass.images = this.taskDetailData.cargoPickUpPictureList || []
+    this.cargoClass.images = this.taskDetailData.cargoPictureList || []
+  }
+
+  // 获取提货状态
+  getPickUpState () {
+    return this.taskDetailData.cargoPickUpPictureList?.length > 0 &&
+    this.taskDetailData.cargoPictureList?.length > 0
+    && this.taskDetailData.cargoPickUpPictureList.every(item => !!item.url)
+    && this.taskDetailData.cargoPictureList.every(item => !!item.url)
   }
 
   @Builder
@@ -128,8 +153,8 @@ struct TaskDetail {
   }
   //提货信息结构
   @Builder getPickUpContent() {
-    Upload({ title: '请拍照上传货品凭证' , upClass: new UploadClass()})
-    Upload({ title: '请拍照上传货品照片' , upClass: new UploadClass()})
+    Upload({ title: '请拍照上传货品凭证' , upClass: this.cargoPickUpClass})
+    Upload({ title: '请拍照上传货品照片' , upClass: this.cargoClass})
   }
 
   // 底部按钮结构
@@ -144,8 +169,9 @@ struct TaskDetail {
         .height(50)
         .width(125)
       Button("提货", { type: ButtonType.Capsule })
-        .backgroundColor($r('app.color.primary_disabled'))
+        .backgroundColor(this.getPickUpState() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
         .fontColor($r('app.color.white'))
+        .enabled(this.getPickUpState())
         .height(50)
         .flexGrow(1)
         .margin({ left: 13 })
