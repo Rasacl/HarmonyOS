@@ -1,4 +1,4 @@
-import {NavBar, ToggleCard} from '../../components'
+import {NavBar, ToggleCard, Upload} from '../../components'
 import router from '@ohos.router'
 import { CommonRouterParams,TaskDetailInfoModel,TaskDetailInfo } from '../../models'
 import { getTaskDetail } from '../../api'
@@ -125,6 +125,11 @@ struct TaskDetail {
       right: 60
     })
   }
+  //提货信息结构
+  @Builder getPickUpContent(){
+    Upload({title:'请拍照上传货品凭证'})
+    Upload({title:'请拍照上传货品照片'})
+  }
   build() {
     Column(){
       NavBar({title:'任务详情'})
@@ -139,6 +144,9 @@ struct TaskDetail {
           }
           ToggleCard({title:'运输路线'}){
             this.getTransLineContent()
+          }
+          ToggleCard({title:'提货信息'}){
+           this.getPickUpContent()
           }
         }
         .padding({
