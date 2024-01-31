@@ -1,4 +1,4 @@
-import {NavBar} from '../../components'
+import {NavBar, ToggleCard} from '../../components'
 import router from '@ohos.router'
 import { CommonRouterParams,TaskDetailInfoModel,TaskDetailInfo } from '../../models'
 import { getTaskDetail } from '../../api'
@@ -19,6 +19,9 @@ struct TaskDetail {
   build() {
     Column(){
       NavBar({title:'任务详情'})
+      ToggleCard({title:'任务详情'}){
+        Text(JSON.stringify(this.taskDetailData))
+      }
     }
     .backgroundColor($r('app.color.background_page'))
     .height('100%')
