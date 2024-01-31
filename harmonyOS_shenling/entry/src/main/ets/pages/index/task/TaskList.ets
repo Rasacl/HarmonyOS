@@ -1,7 +1,7 @@
 import { getTaskList } from '../../../api'
-import { TaskInfoItem, TaskListParams, TaskListParamsModel, TaskTypeEnum } from '../../../models'
+import { TaskInfoItem, TaskListParams, TaskListParamsModel, TaskTypeEnum, TaskInfoItemModel } from '../../../models'
 import TaskItemCard  from './TaskItemCard'
-import {Loading} from '../../../components'
+import {RefreshList} from '../../../components'
 import promptAction from '@ohos.promptAction'
 @Preview
 @Component
@@ -12,11 +12,8 @@ struct TaskList {
     status: TaskTypeEnum.Waiting
   } as TaskListParams)
   @State
-  refreshing: boolean = false //控制下拉状态的变量
-  @State
   taskListData: TaskInfoItem[] = []
-  allPage: number = 1 // 总页数先设置为1页 后续会更新
-  @State loading:boolean = false // 是否正在加载数据
+  @State allPage: number = 1 // 总页数先设置为1页 后续会更新
   // aboutToAppear(){
   //   this.getTaskList()
   // }  //onReachEnd会触发请求
@@ -32,59 +29,27 @@ struct TaskList {
     this.allPage = 1 //总页数也得回到第一页
     this.queryParams.page = 1 // 重置页码为1
     await this.getTaskList(false)
-    this.refreshing = false
-    this.loading = false // 控制上拉加载的  必须把这个地方设置为false
     promptAction.showToast({
       message:'刷新成功'
     })
   }
-  @Builder getBottomDisplay(){
-    Row({ space: 10 }) {
-      if (this.loading) {
-        Text(this.allPage < this.queryParams.page ? "已经没有内容拉" : "加载数据中")
-          .fontSize(14)
-          .fontColor($r("app.color.text_secondary"))
-        if(this.allPage >= this.queryParams.page) {
-          Loading({
-            hWidth: 20
-          })
-        }
-      }
-    }
-    .height(50)
-    .width('100%')
-    .justifyContent(FlexAlign.Center)
+  @Builder
+  renderItem (item: object) {
+    TaskItemCard({ taskItemData: item as TaskInfoItemModel })
   }
   build() {
-    // refresh 可以双向绑定
-    Refresh({refreshing:$$this.refreshing}){
-      List(){
-        ForEach(this.taskListData, (item:TaskInfoItem) => {
-          ListItem(){
-            TaskItemCard({taskItemData:item})
-          }
-        })
-        ListItem() {
-          this.getBottomDisplay() // 底部显示内容
-        }//Next版本不需要加ListItem依然可以触发onReachEnd
-      }
-      .onReachEnd(async () => {
-        // 进行分页加载 还没有加载完的情况下还可以继续加载，如果加载完成就不能在继续加载了
-        if(this.allPage >= this.queryParams.page){
-          if(!this.loading){
-            this.loading = true
-            await this.getTaskList(true)
-            this.loading = this.allPage < this.queryParams.page ? true : false // 如果请求完了 判断一下 是不是已经没有数据了
-          }
-        }
-      })
-    }
-    .onStateChange((value) => {
-      if(value === RefreshStatus.Refresh){
-        // 重新加载数据
-        this.onRefresh()
-
-      }
+    RefreshList({
+      onLoad: async () => {
+        await this.getTaskList(true)
+      },
+      onRefresh: async () => {
+        await this.onRefresh()
+      },
+      dataSource: $taskListData,
+      renderItem: this.renderItem,
+      finished: this.allPage < this.queryParams.page,
+      finishText: '没啦没啦',
+      loadingText: '拼命加载中'
     })
   }
 }
