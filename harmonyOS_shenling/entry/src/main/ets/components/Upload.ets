@@ -3,18 +3,20 @@ import fs from '@ohos.file.fs'
 import util from '@ohos.util'
 import request from '@ohos.request'
 import { uploadImage } from '../api'
+import { ImageList } from '../models'
 
 @Preview
 @Component
 struct Upload {
   title:string = ''
   maxNumber:number = 3
+  @ObjectLink upClass:UploadClass
   // 弹出相册选择器
   async selectImage(){
     const photoPicker = new picker.PhotoViewPicker()
     const result = await photoPicker.select({
       MIMEType:picker.PhotoViewMIMETypes.IMAGE_TYPE,
-      maxSelectNumber:this.maxNumber
+      maxSelectNumber: this.maxNumber - this.upClass.images.length
     })
     //循环数组
     if(result.photoUris?.length){
@@ -46,9 +48,7 @@ struct Upload {
           })
         })
         const images = await uploadImage(getContext(this), files)
-        AlertDialog.show({
-          message: JSON.stringify(images)
-        })
+        this.upClass.images = this.upClass.images.concat(images)  // 赋值数据
       } catch (err){
         AlertDialog.show({
           message: err.message
@@ -68,27 +68,42 @@ struct Upload {
           top:16,
           bottom:16
         })
+      //渲染图片
+      Flex({ wrap: FlexWrap.Wrap }) {
+        ForEach(this.upClass.images, (item: ImageList, index: number) => {
+          Row() {
+            Image(item.url)
+              .width(95)
+              .height(95)
+              .borderRadius(4)
 
-      Row(){
-        Image($r('app.media.ic_add_img'))
-          .width(30)
-          .aspectRatio(1)
+          }.margin({ right: 15, bottom: 10 })
+        })
+        if(this.maxNumber > this.upClass.images.length) {
+          Row() {
+            Image($r("app.media.ic_add_img")).width(30).height(30)
+          }
+          .width(95)
+          .height(95)
+          .backgroundColor('#F2F2F2')
+          .alignItems(VerticalAlign.Center)
+          .justifyContent(FlexAlign.Center)
+          .onClick(() => {
+            this.selectImage()
+          })
+        }
       }
-      .width(95)
-      .aspectRatio(1)
-      .backgroundColor($r('app.color.gray_1'))
-      .borderRadius(4)
-      .justifyContent(FlexAlign.Center)
-      .onClick(() => {
-        this.selectImage()
-      })
     }
     .width('100%')
     .alignItems(HorizontalAlign.Start)
 
   }
 }
-
+@Observed
+class UploadClass {
+  images: ImageList[] = []
+}
 export {
-  Upload
+  Upload,
+  UploadClass
 }

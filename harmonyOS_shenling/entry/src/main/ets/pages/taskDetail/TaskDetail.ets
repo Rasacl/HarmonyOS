@@ -1,4 +1,4 @@
-import { NavBar, ToggleCard, Upload } from '../../components'
+import { NavBar, ToggleCard, Upload, UploadClass } from '../../components'
 import router from '@ohos.router'
 import { CommonRouterParams, TaskDetailInfo, TaskDetailInfoModel } from '../../models'
 import { getTaskDetail } from '../../api'
@@ -128,8 +128,8 @@ struct TaskDetail {
   }
   //提货信息结构
   @Builder getPickUpContent() {
-    Upload({ title: '请拍照上传货品凭证' })
-    Upload({ title: '请拍照上传货品照片' })
+    Upload({ title: '请拍照上传货品凭证' , upClass: new UploadClass()})
+    Upload({ title: '请拍照上传货品照片' , upClass: new UploadClass()})
   }
 
   // 底部按钮结构
