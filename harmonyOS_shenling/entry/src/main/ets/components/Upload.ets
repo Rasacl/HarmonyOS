@@ -45,7 +45,10 @@ struct Upload {
             type: 'jpg'
           })
         })
-        uploadImage(getContext(this), files)
+        const images = await uploadImage(getContext(this), files)
+        AlertDialog.show({
+          message: JSON.stringify(images)
+        })
       } catch (err){
         AlertDialog.show({
           message: err.message
