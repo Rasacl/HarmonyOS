@@ -71,12 +71,17 @@ struct Upload {
       //渲染图片
       Flex({ wrap: FlexWrap.Wrap }) {
         ForEach(this.upClass.images, (item: ImageList, index: number) => {
-          Row() {
+          Stack({ alignContent: Alignment.TopEnd }) {
             Image(item.url)
               .width(95)
               .height(95)
               .borderRadius(4)
-
+            Image($r('app.media.ic_btn_delete'))
+              .width(30)
+              .height(30)
+              .onClick(() => {
+                this.upClass.images = this.upClass.images.filter((_, i) => i !== index)
+              })
           }.margin({ right: 15, bottom: 10 })
         })
         if(this.maxNumber > this.upClass.images.length) {
