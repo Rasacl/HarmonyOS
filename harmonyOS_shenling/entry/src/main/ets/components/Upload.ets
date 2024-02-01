@@ -9,6 +9,7 @@ import { Loading } from '../components'
 @Preview
 @Component
 struct Upload {
+  @Prop canUpload:boolean = true  // 默认可以上传和删除
   title:string = ''
   maxNumber:number = 3
   @ObjectLink upClass:UploadClass
@@ -88,15 +89,17 @@ struct Upload {
               .width(95)
               .height(95)
               .borderRadius(4)
-            Image($r('app.media.ic_btn_delete'))
-              .width(30)
-              .height(30)
-              .onClick(() => {
-                this.upClass.images = this.upClass.images.filter((_, i) => i !== index)
-              })
+            if(this.canUpload){
+              Image($r('app.media.ic_btn_delete'))
+                .width(30)
+                .height(30)
+                .onClick(() => {
+                  this.upClass.images = this.upClass.images.filter((_, i) => i !== index)
+                })
+            }
           }.margin({ right: 15, bottom: 10 })
         })
-        if(this.maxNumber > this.upClass.images.length) {
+        if(this.maxNumber > this.upClass.images.length && this.canUpload) {
           Row() {
             Image($r("app.media.ic_add_img")).width(30).height(30)
           }

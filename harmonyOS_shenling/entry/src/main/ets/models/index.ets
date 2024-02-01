@@ -9,6 +9,7 @@ export * from './task_detail'
 export * from './pick_up'
 export * from './common'
 export * from './deliver'
+export * from './car_record'
 
 // 统一的类型工具 用来处理所有接口的返回类型
 export class ResponseData<T> {

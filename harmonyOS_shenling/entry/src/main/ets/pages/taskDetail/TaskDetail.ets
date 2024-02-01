@@ -212,14 +212,14 @@ struct TaskDetail {
   }
   //提货信息结构
   @Builder getPickUpContent() {
-    Upload({ title: '请拍照上传货品凭证' , upClass: this.cargoPickUpClass})
-    Upload({ title: '请拍照上传货品照片' , upClass: this.cargoClass})
+    Upload({ title: '请拍照上传货品凭证' , upClass: this.cargoPickUpClass, canUpload: this.taskDetailData.status === TaskTypeEnum.Waiting})
+    Upload({ title: '请拍照上传货品照片' , upClass: this.cargoClass, canUpload: this.taskDetailData.status === TaskTypeEnum.Waiting})
   }
   // 交货信息内容
   @Builder
   getDeliverContent () {
-    Upload({ title: '请拍照上传交货凭证', upClass: this.certificateClass })
-    Upload({ title: '请拍照上传交货货品照片', upClass: this.deliverClass })
+    Upload({ title: '请拍照上传交货凭证', upClass: this.certificateClass, canUpload: this.taskDetailData.status === TaskTypeEnum.Line})
+    Upload({ title: '请拍照上传交货货品照片', upClass: this.deliverClass , canUpload: this.taskDetailData.status === TaskTypeEnum.Line})
   }
   // 底部按钮结构
   @Builder
