@@ -1,5 +1,6 @@
-import { TabClass } from '../../../models'
+import { TabClass, TaskListParamsModel, TaskTypeEnum, TaskListParams } from '../../../models'
 import TaskList from './TaskList'
+
 @Component
 struct TaskTabs {
   @State
@@ -39,9 +40,17 @@ struct TaskTabs {
     Tabs({ barPosition: BarPosition.Start }) {
       ForEach(this.tabsData, (item: TabClass) => {
         TabContent(){
-          if(item.name === 'waiting'){
+          if (item.name === 'waiting') {
+            //待提货
             TaskList()
-          }else{
+          } else if (item.name === 'line') {
+            // 在途
+            TaskList({ queryParams: new TaskListParamsModel({
+              page: 1,
+              pageSize: 5,
+              status: TaskTypeEnum.Line
+            } as TaskListParams) })
+          } else {
             Text(item.title)
           }
         }.tabBar(this.getTabBar(item))
