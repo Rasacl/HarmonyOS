@@ -1,6 +1,6 @@
-import { NavBar, ToggleCard, Upload, UploadClass, Loading } from '../../components'
+import { Loading, NavBar, ToggleCard, Upload, UploadClass } from '../../components'
 import router from '@ohos.router'
-import { CommonRouterParams, TaskDetailInfo, TaskDetailInfoModel, PickUpParamsModel } from '../../models'
+import { CommonRouterParams, PickUpParamsModel, TaskDetailInfo, TaskDetailInfoModel, TaskTypeEnum } from '../../models'
 import { getTaskDetail, pickUp } from '../../api'
 import promptAction from '@ohos.promptAction'
 
@@ -22,6 +22,14 @@ struct TaskDetail {
   @State
   @Watch('updateCargo')  // 这是子传父
   cargoClass:UploadClass = new UploadClass()
+  // 交货凭证
+  @State
+  @Watch('updateDeliverPics')
+  deliverClass: UploadClass = new UploadClass()
+  // 交货货品照片
+  @State
+  @Watch('updateCertificatePics')
+  certificateClass: UploadClass = new UploadClass()
   scroll:Scroller = new Scroller()  // 属于外力控制
   aboutToAppear(){
     const params = router.getParams() as CommonRouterParams
@@ -35,13 +43,21 @@ struct TaskDetail {
   updateCargo() {
     this.taskDetailData.cargoPictureList = this.cargoClass.images
   }
-
+  updateDeliverPics () {
+    this.taskDetailData.deliverPictureList = this.deliverClass.images
+  }
+  updateCertificatePics() {
+    this.taskDetailData.certificatePictureList = this.certificateClass.images
+  }
   async getTaskDetail(id:string){
     this.layer.open()
     this.taskDetailData = await getTaskDetail(id)
     //将获取的详情的数据更新到子组件的class 这是父传子
     this.cargoPickUpClass.images = this.taskDetailData.cargoPickUpPictureList || []
     this.cargoClass.images = this.taskDetailData.cargoPictureList || []
+
+    this.certificateClass.images = this.taskDetailData.certificatePictureList || []
+    this.deliverClass.images = this.taskDetailData.deliverPictureList || []
     this.layer.close()
   }
 
@@ -51,6 +67,14 @@ struct TaskDetail {
     this.taskDetailData.cargoPictureList?.length > 0
     && this.taskDetailData.cargoPickUpPictureList.every(item => !!item.url)
     && this.taskDetailData.cargoPictureList.every(item => !!item.url)
+  }
+
+  // 获取交货状态
+  getDeliverState () {
+    return this.taskDetailData.deliverPictureList?.length > 0 &&
+    this.taskDetailData.certificatePictureList?.length > 0
+    && this.taskDetailData.deliverPictureList.every(item => !!item.url)
+    && this.taskDetailData.certificatePictureList.every(item => !!item.url)
   }
 
   //提货方法
@@ -179,28 +203,50 @@ struct TaskDetail {
     Upload({ title: '请拍照上传货品凭证' , upClass: this.cargoPickUpClass})
     Upload({ title: '请拍照上传货品照片' , upClass: this.cargoClass})
   }
-
+  // 交货信息内容
+  @Builder
+  getDeliverContent () {
+    Upload({ title: '请拍照上传交货凭证', upClass: this.certificateClass })
+    Upload({ title: '请拍照上传交货货品照片', upClass: this.deliverClass })
+  }
   // 底部按钮结构
   @Builder
   getBottomBtn() {
     //已完成不显示任何按钮
     Row() {
-      Button("延迟收货", { type: ButtonType.Capsule })
-        .backgroundColor($r('app.color.btn_gray'))
-        .fontColor($r('app.color.text_primary'))
-        .fontSize(16)
-        .height(50)
-        .width(125)
-      Button("提货", { type: ButtonType.Capsule })
-        .backgroundColor(this.getPickUpState() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
-        .fontColor($r('app.color.white'))
-        .enabled(this.getPickUpState())
-        .height(50)
-        .flexGrow(1)
-        .margin({ left: 13 })
-        .onClick(() => {
-          this.btnPickUp()
-        })
+      if (this.taskDetailData.status === TaskTypeEnum.Waiting) {
+        Button("延迟收货", { type: ButtonType.Capsule })
+          .backgroundColor($r('app.color.btn_gray'))
+          .fontColor($r('app.color.text_primary'))
+          .fontSize(16)
+          .height(50)
+          .width(125)
+        Button("提货", { type: ButtonType.Capsule })
+          .backgroundColor(this.getPickUpState() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
+          .fontColor($r('app.color.white'))
+          .enabled(this.getPickUpState())
+          .height(50)
+          .flexGrow(1)
+          .margin({ left: 13 })
+          .onClick(() => {
+            this.btnPickUp()
+          })
+      } else if (this.taskDetailData.status === TaskTypeEnum.Line) {
+        Button("上报异常", { type: ButtonType.Capsule })
+          .backgroundColor($r('app.color.btn_gray'))
+          .fontColor($r('app.color.text_primary'))
+          .fontSize(16)
+          .height(50)
+          .width(125)
+        Button("交货", { type: ButtonType.Capsule })
+          .fontColor($r('app.color.white'))
+          .height(50)
+          .flexGrow(1)
+          .margin({ left: 13 })
+          .backgroundColor(this.getDeliverState() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
+          .enabled(this.getDeliverState())
+      }
+
     }
     .width('100%')
     .padding({ left: 15, right: 15 })
@@ -228,9 +274,17 @@ struct TaskDetail {
           ToggleCard({title:'运输路线'}){
             this.getTransLineContent()
           }
-
-          ToggleCard({ title: '提货信息' }) {
-            this.getPickUpContent()
+          // 提货时显示提货照片
+          if(this.taskDetailData.status === TaskTypeEnum.Waiting) {
+            ToggleCard({ title: '提货信息' }) {
+              this.getPickUpContent()
+            }
+          }
+          // 交货时显示交货照片
+          if(this.taskDetailData.status === TaskTypeEnum.Line) {
+            ToggleCard({ title: '交货信息' }) {
+              this.getDeliverContent()
+            }
           }
         }
         .padding({
