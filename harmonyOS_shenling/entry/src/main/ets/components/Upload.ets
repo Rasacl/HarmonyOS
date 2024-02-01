@@ -4,14 +4,15 @@ import util from '@ohos.util'
 import request from '@ohos.request'
 import { uploadImage } from '../api'
 import { ImageList } from '../models'
-import { Loading } from '../components'
+import { Loading, ImagePreview } from '../components'
 
-@Preview
 @Component
 struct Upload {
   @Prop canUpload:boolean = true  // 默认可以上传和删除
   title:string = ''
   maxNumber:number = 3
+  @State list:string[] = []
+  @State index:number = -1
   @ObjectLink upClass:UploadClass
   // 定义弹层
   layer:CustomDialogController = new CustomDialogController({
@@ -19,6 +20,16 @@ struct Upload {
     autoCancel:false,
     customStyle:true,
     builder: Loading({loadingText:'图片上传中'})
+  })
+  // 预览照片弹层
+  preview:CustomDialogController = new CustomDialogController({
+    alignment:DialogAlignment.Center,
+    autoCancel:false,
+    customStyle:true,
+    builder:ImagePreview({
+      urls: this.list,
+      selectIndex: this.index
+    })
   })
   // 弹出相册选择器
   async selectImage(){
@@ -89,6 +100,11 @@ struct Upload {
               .width(95)
               .height(95)
               .borderRadius(4)
+            .onClick(() => {
+              this.index = index
+              this.list = this.upClass.images.map(item => item.url)  //转为字符串数组
+              this.preview.open()
+            })
             if(this.canUpload){
               Image($r('app.media.ic_btn_delete'))
                 .width(30)
