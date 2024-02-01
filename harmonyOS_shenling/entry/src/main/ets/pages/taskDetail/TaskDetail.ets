@@ -1,7 +1,8 @@
 import { NavBar, ToggleCard, Upload, UploadClass, Loading } from '../../components'
 import router from '@ohos.router'
-import { CommonRouterParams, TaskDetailInfo, TaskDetailInfoModel } from '../../models'
-import { getTaskDetail } from '../../api'
+import { CommonRouterParams, TaskDetailInfo, TaskDetailInfoModel, PickUpParamsModel } from '../../models'
+import { getTaskDetail, pickUp } from '../../api'
+import promptAction from '@ohos.promptAction'
 
 @Entry
 @Component
@@ -50,6 +51,20 @@ struct TaskDetail {
     this.taskDetailData.cargoPictureList?.length > 0
     && this.taskDetailData.cargoPickUpPictureList.every(item => !!item.url)
     && this.taskDetailData.cargoPictureList.every(item => !!item.url)
+  }
+
+  //提货方法
+  async btnPickUp(){
+    await pickUp(new PickUpParamsModel({
+      id: this.taskDetailData.id,
+      cargoPickUpPictureList: this.taskDetailData.cargoPickUpPictureList,
+      cargoPictureList: this.taskDetailData.cargoPictureList
+    }))
+    promptAction.showToast({
+      message: '提货成功',
+      duration: 3000
+    })
+    this.getTaskDetail(this.taskDetailData.id) // 重新加载数据
   }
 
   @Builder
@@ -183,6 +198,9 @@ struct TaskDetail {
         .height(50)
         .flexGrow(1)
         .margin({ left: 13 })
+        .onClick(() => {
+          this.btnPickUp()
+        })
     }
     .width('100%')
     .padding({ left: 15, right: 15 })
