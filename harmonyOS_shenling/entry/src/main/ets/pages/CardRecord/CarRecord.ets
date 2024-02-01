@@ -1,15 +1,30 @@
-import { Card, CardItem, CheckBox, NavBar } from '../../components'
+import { Card, CardItem, CheckBox, NavBar,DateTimePicker } from '../../components'
+import promptAction from '@ohos.promptAction'
 
 @Entry
 @Component
 struct CarRecord {
+  dateTimePicker:CustomDialogController = new CustomDialogController({
+    autoCancel:false,
+    customStyle:true,
+    alignment:DialogAlignment.Bottom,
+    builder:DateTimePicker({
+      onFinish: (value) => {
+        promptAction.showToast({
+          message:value
+        })
+      }
+    })
+  })
   build() {
     Column() {
       NavBar({ title: '回车登记' })
 
       Card() {
         CardItem({ leftTitle: '出车时间', rightText: '2022.05.04 13:00', showRightIcon: false })
-        CardItem({ leftTitle: '回车时间', rightText: '请选择', showBottomBorder: false })
+        CardItem({ leftTitle: '回车时间', rightText: '请选择', showBottomBorder: false, onRightClick: () => {
+          this.dateTimePicker.open()
+        } })
       }
 
       CheckBox({ value: false, title: '车辆违章' })
