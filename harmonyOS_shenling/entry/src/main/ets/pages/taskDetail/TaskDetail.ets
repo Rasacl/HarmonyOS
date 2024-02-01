@@ -1,7 +1,7 @@
 import { Loading, NavBar, ToggleCard, Upload, UploadClass } from '../../components'
 import router from '@ohos.router'
-import { CommonRouterParams, PickUpParamsModel, TaskDetailInfo, TaskDetailInfoModel, TaskTypeEnum } from '../../models'
-import { getTaskDetail, pickUp } from '../../api'
+import { CommonRouterParams, DeliverParamsTypeModel, PickUpParamsModel, TaskDetailInfo, TaskDetailInfoModel, TaskTypeEnum } from '../../models'
+import { deliver, getTaskDetail, pickUp } from '../../api'
 import promptAction from '@ohos.promptAction'
 
 @Entry
@@ -87,6 +87,18 @@ struct TaskDetail {
     promptAction.showToast({
       message: '提货成功',
       duration: 3000
+    })
+    this.getTaskDetail(this.taskDetailData.id) // 重新加载数据
+  }
+  //交货方法
+  async btnDeliver(){
+    await deliver(new DeliverParamsTypeModel({
+      id: this.taskDetailData.id,
+      certificatePictureList: this.taskDetailData.certificatePictureList,
+      deliverPictureList: this.taskDetailData.deliverPictureList
+    }))
+    promptAction.showToast({
+      message: '交货成功'
     })
     this.getTaskDetail(this.taskDetailData.id) // 重新加载数据
   }
@@ -245,6 +257,20 @@ struct TaskDetail {
           .margin({ left: 13 })
           .backgroundColor(this.getDeliverState() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
           .enabled(this.getDeliverState())
+          .onClick(() => {
+            this.btnDeliver()
+          })
+      }else if(this.taskDetailData.status === TaskTypeEnum.Delivered) {
+        Row() {
+          // 已交付显示回车登记
+          Button("回车登记", { type: ButtonType.Capsule })
+            .backgroundColor($r('app.color.primary'))
+            .fontColor($r('app.color.white'))
+            .height(50)
+            .width('80%')
+        }
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       }
 
     }
@@ -275,13 +301,13 @@ struct TaskDetail {
             this.getTransLineContent()
           }
           // 提货时显示提货照片
-          if(this.taskDetailData.status === TaskTypeEnum.Waiting) {
+          if(this.taskDetailData.status === TaskTypeEnum.Waiting || this.taskDetailData.status === TaskTypeEnum.Delivered) {
             ToggleCard({ title: '提货信息' }) {
               this.getPickUpContent()
             }
           }
           // 交货时显示交货照片
-          if(this.taskDetailData.status === TaskTypeEnum.Line) {
+          if(this.taskDetailData.status === TaskTypeEnum.Line || this.taskDetailData.status === TaskTypeEnum.Delivered) {
             ToggleCard({ title: '交货信息' }) {
               this.getDeliverContent()
             }
