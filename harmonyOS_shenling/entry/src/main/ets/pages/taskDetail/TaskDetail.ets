@@ -1,4 +1,4 @@
-import { NavBar, ToggleCard, Upload, UploadClass } from '../../components'
+import { NavBar, ToggleCard, Upload, UploadClass, Loading } from '../../components'
 import router from '@ohos.router'
 import { CommonRouterParams, TaskDetailInfo, TaskDetailInfoModel } from '../../models'
 import { getTaskDetail } from '../../api'
@@ -6,6 +6,12 @@ import { getTaskDetail } from '../../api'
 @Entry
 @Component
 struct TaskDetail {
+  layer:CustomDialogController = new CustomDialogController({
+    alignment:DialogAlignment.Center,
+    autoCancel:false,
+    customStyle:true,
+    builder: Loading({loadingText:'详情加载中'})
+  })
   @State taskDetailData:TaskDetailInfoModel = new TaskDetailInfoModel({} as TaskDetailInfo)
   // 提货凭证
   @State
@@ -30,10 +36,12 @@ struct TaskDetail {
   }
 
   async getTaskDetail(id:string){
+    this.layer.open()
     this.taskDetailData = await getTaskDetail(id)
     //将获取的详情的数据更新到子组件的class 这是父传子
     this.cargoPickUpClass.images = this.taskDetailData.cargoPickUpPictureList || []
     this.cargoClass.images = this.taskDetailData.cargoPictureList || []
+    this.layer.close()
   }
 
   // 获取提货状态

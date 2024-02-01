@@ -4,6 +4,7 @@ import util from '@ohos.util'
 import request from '@ohos.request'
 import { uploadImage } from '../api'
 import { ImageList } from '../models'
+import { Loading } from '../components'
 
 @Preview
 @Component
@@ -11,6 +12,13 @@ struct Upload {
   title:string = ''
   maxNumber:number = 3
   @ObjectLink upClass:UploadClass
+  // 定义弹层
+  layer:CustomDialogController = new CustomDialogController({
+    alignment:DialogAlignment.Center,
+    autoCancel:false,
+    customStyle:true,
+    builder: Loading({loadingText:'图片上传中'})
+  })
   // 弹出相册选择器
   async selectImage(){
     const photoPicker = new picker.PhotoViewPicker()
@@ -20,6 +28,7 @@ struct Upload {
     })
     //循环数组
     if(result.photoUris?.length){
+      this.layer.open()
       try {
 
         let files: request.File[] = []
@@ -53,6 +62,9 @@ struct Upload {
         AlertDialog.show({
           message: err.message
         })
+      }
+      finally {
+        this.layer.close()
       }
 
     }

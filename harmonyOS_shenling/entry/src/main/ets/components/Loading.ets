@@ -1,10 +1,13 @@
+@CustomDialog
 @Component
 struct Loading {
+  controller:CustomDialogController
   @State
   num: number = 0
   maxNumber: number = 100
   timer: number = -1
   hWidth: number = 40
+  loadingText:string = ''
   aboutToAppear() {
     this.timer = setInterval(() => {
       if(this.num === this.maxNumber) {
@@ -17,13 +20,22 @@ struct Loading {
     clearInterval(this.timer)
   }
   build() {
-    Progress({
-      value: this.num,
-      total: this.maxNumber,
-      type: ProgressType.ScaleRing
-    }).color($r('app.color.text_secondary'))
-      .width(this.hWidth)
-      .style({ strokeWidth: 2 })
+    Column({space:20}){
+      Progress({
+        value: this.num,
+        total: this.maxNumber,
+        type: ProgressType.ScaleRing
+      }).color($r('app.color.text_secondary'))
+        .width(this.hWidth)
+        .style({ strokeWidth: 2 })
+
+      if(this.loadingText){
+        Text(this.loadingText)
+          .fontSize(14)
+          .fontColor($r('app.color.text_secondary'))
+      }
+    }
+
   }
 }
 export { Loading }
