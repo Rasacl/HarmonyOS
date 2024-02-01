@@ -268,6 +268,14 @@ struct TaskDetail {
             .fontColor($r('app.color.white'))
             .height(50)
             .width('80%')
+            .onClick(() => {
+              router.pushUrl({
+                url:'pages/CardRecord/CarRecord',
+                params:{
+                  id:this.taskDetailData.id
+                }
+              })
+            })
         }
         .width('100%')
         .justifyContent(FlexAlign.Center)
