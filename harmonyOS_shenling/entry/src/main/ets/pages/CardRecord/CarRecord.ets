@@ -1,4 +1,4 @@
-import { Card, CardItem, NavBar } from '../../components'
+import { Card, CardItem, CheckBox, NavBar } from '../../components'
 
 @Entry
 @Component
@@ -11,6 +11,10 @@ struct CarRecord {
         CardItem({ leftTitle: '出车时间', rightText: '2022.05.04 13:00', showRightIcon: false })
         CardItem({ leftTitle: '回车时间', rightText: '请选择', showBottomBorder: false })
       }
+
+      CheckBox({ value: false, title: '车辆违章' })
+      CheckBox({ value: false, title: '车辆故障' })
+      CheckBox({ value: false, title: '车辆事故' })
 
       Row(){
         Button('交车')
