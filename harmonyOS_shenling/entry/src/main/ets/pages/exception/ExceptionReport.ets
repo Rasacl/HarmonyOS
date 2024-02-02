@@ -28,6 +28,7 @@ struct ExceptionReport {
     } ,
       confirm: () => {
         this.exceptionForm.exceptionType = this.exceptErrorList[this.selectIndex]
+        this.typeDialog.close()
       }
     }),
     autoCancel: false,
@@ -79,7 +80,11 @@ struct ExceptionReport {
         CardItem({ leftTitle: '异常时间', rightText: this.exceptionForm.exceptionTime || '请选择', onRightClick: () => {
           this.dateTimePicker.open()
         } })
-        CardItem({ leftTitle: '上报位置', rightText: '请选择' })
+        CardItem({ leftTitle: '上报位置', rightText: '请选择', onRightClick:() => {
+          router.pushUrl({
+            url: 'pages/selectLocation/SelectLocation'
+          })
+        } })
         CardItem({ leftTitle: '异常类型', rightText: this.exceptionForm.exceptionType || '请选择', onRightClick: () => {
           this.typeDialog.open()
         } })

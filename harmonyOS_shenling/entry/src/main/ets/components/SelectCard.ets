@@ -46,7 +46,6 @@ struct SelectCard {
             .onClick(() => {
               // 告诉外界我点了确定
               this.confirm()
-              this.controller.close()
             })
         }
         .width('100%')

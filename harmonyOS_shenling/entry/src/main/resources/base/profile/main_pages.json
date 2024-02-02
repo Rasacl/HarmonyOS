@@ -7,6 +7,7 @@
     "pages/taskDetail/TaskDetail",
     "pages/CardRecord/CarRecord",
     "pages/delay/Delay",
-    "pages/exception/ExceptionReport"
+    "pages/exception/ExceptionReport",
+    "pages/selectLocation/SelectLocation"
   ]
 }
