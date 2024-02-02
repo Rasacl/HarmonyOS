@@ -233,6 +233,15 @@ struct TaskDetail {
           .fontSize(16)
           .height(50)
           .width(125)
+          .onClick(() => {
+            router.pushUrl({
+              url:'pages/delay/Delay',
+              params:{
+                id: this.taskDetailData.id,
+                oldTime: this.taskDetailData.planDepartureTime
+              }
+            })
+          })
         Button("提货", { type: ButtonType.Capsule })
           .backgroundColor(this.getPickUpState() ? $r('app.color.primary') : $r('app.color.primary_disabled'))
           .fontColor($r('app.color.white'))

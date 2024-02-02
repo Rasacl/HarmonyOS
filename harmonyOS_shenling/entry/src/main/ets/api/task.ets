@@ -1,4 +1,4 @@
-import {TaskListDataModel, TaskListParamsModel, TaskDetailInfoModel,PickUpParamsModel, DeliverParamsTypeModel, CarRecordTypeModel} from '../models'
+import {TaskListDataModel, TaskListParamsModel, TaskDetailInfoModel,PickUpParamsModel, DeliverParamsTypeModel, CarRecordTypeModel, DelayParamsTypeModel} from '../models'
 import { Request } from '../utils'
 
 // 类型传值是既可以用interface也可以用class
@@ -25,4 +25,9 @@ export const deliver = (data:DeliverParamsTypeModel) => {
 // 回车登记
 export const carRecord = (data: CarRecordTypeModel) => {
   return Request.post<null>("/tasks/truckRegistration", data)
+}
+
+// 延迟收货
+export const delay = (data: DelayParamsTypeModel) => {
+  return Request.put<null>("/tasks/delay", data)
 }
