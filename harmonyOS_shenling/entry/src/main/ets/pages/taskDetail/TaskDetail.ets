@@ -93,6 +93,7 @@ struct TaskDetail {
       duration: 3000
     })
     this.getTaskDetail(this.taskDetailData.id) // 重新加载数据
+    this.scroll.scrollEdge(Edge.Top)  //滚到顶部
   }
   //交货方法
   async btnDeliver(){
@@ -140,14 +141,16 @@ struct TaskDetail {
       .margin({
         right: 20
       })
-
-      Column() {
-        Image($r("app.media.ic_navigation")).width(22).height(22)
-        Text("开始导航").fontSize(14).margin({ top: 10, bottom: 10 })
-      }.justifyContent(FlexAlign.SpaceBetween)
-      .margin({
-        top: 20
-      })
+ // 在途情况下 才显示导航
+      if (this.taskDetailData.status === TaskTypeEnum.Line) {
+        Column() {
+          Image($r("app.media.ic_navigation")).width(22).height(22)
+          Text("开始导航").fontSize(14).margin({ top: 10, bottom: 10 })
+        }.justifyContent(FlexAlign.SpaceBetween)
+        .margin({
+          top: 20
+        })
+      }
 
     }.justifyContent(FlexAlign.SpaceBetween).alignItems(VerticalAlign.Center).width('100%')
 
