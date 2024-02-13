@@ -29,8 +29,34 @@
         zoom: 15, //级别
         center: [116.397428, 39.90923], //中心点坐标
       })
-      map.setZoomAndCenter(18,[114.454,38.49])
+     // var h5Port
+     // window.addEventListener("message", function (event) {
+     //   if (event.data == "__init_port__") {
+     //       h5Port =  event.ports[0]
+     //      h5Port.postMessage(JSON.stringify({ type: 'connect_ok' })) // 告知原生连接成功
+     //   }
+     // })
 
+  window.onload = async function () {
+        if(window.shenling) {
+          shenling.getLocation("getLocation")
+        }
+     }
+    function getLocation (lon, lat) {
+    //将坐标定位到经纬度上
+       map.setZoomAndCenter(18, [lon, lat])
+       map.plugin(["AMap.PlaceSearch"], function () {
+          var MSearch = new AMap.PlaceSearch({
+            pageSize: 4,
+            pageIndex: 1, //请求页码，默认1
+            extensions: "base", //返回信息详略，默认为base（基本信息）
+          }) //构造PlaceSearch类
+          AMap.event.addListener(MSearch, "complete", (result) => {
+           shenling.receiveData("search_list",JSON.stringify(result?.poiList?.pois || []))
+          }) //返回结果
+          MSearch.searchNearBy("地点", new AMap.LngLat(lon, lat)) //关键字查询
+        })
+    }
     </script>
 </body>
 </html>

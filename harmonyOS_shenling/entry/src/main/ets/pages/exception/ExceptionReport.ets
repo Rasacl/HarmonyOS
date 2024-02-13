@@ -1,14 +1,23 @@
 import { Card, CardItem, DateTimePicker, NavBar, SelectCard, Upload, UploadClass } from '../../components'
 import { CommonRouterParams, ExceptionParamsType, ExceptionParamsTypeModel } from '../../models'
 import router from '@ohos.router'
+import { exceptionReport } from '../../api'
+import promptAction from '@ohos.promptAction'
 
 @Entry
 @Component
 struct ExceptionReport {
-  @State exceptionImagesList: UploadClass = new UploadClass()
+  @State
+  @Watch('updateExceptionImagesList')
+  exceptionImagesList: UploadClass = new UploadClass()
   @State exceptionForm: ExceptionParamsTypeModel = new ExceptionParamsTypeModel({} as ExceptionParamsType)
   @State exceptErrorList: string[] = ["发动机启动困难", "不着车、漏油", "照明失灵", "有异常响动", "排烟异常、温度异常", "其他问题"]
   @State selectIndex: number = 0
+  maxNumber: number = 50
+
+  updateExceptionImagesList() {
+    this.exceptionForm.exceptionImagesList = this.exceptionImagesList.images
+  }
   //时间弹窗
   dateTimePicker: CustomDialogController = new CustomDialogController({
     builder: DateTimePicker({
@@ -36,13 +45,37 @@ struct ExceptionReport {
     alignment: DialogAlignment.Bottom
   })
 
-  aboutToAppear() {
+  onPageShow() {
     const params = router.getParams() as CommonRouterParams
     if (params && params.id) {
       this.exceptionForm.transportTaskId = params.id
     }
+    if(params && params.address) {
+      this.exceptionForm.exceptionPlace = params.address
+    }
   }
 
+  getBtnEnable () {
+    return !!(this.exceptionForm.exceptionDescribe &&
+    this.exceptionForm.exceptionPlace &&
+    this.exceptionForm.exceptionTime &&
+    this.exceptionForm.exceptionType &&
+    this.exceptionForm.exceptionDescribe)
+  }
+
+  async btnReport () {
+    try {
+      await exceptionReport(this.exceptionForm)
+      promptAction.showToast({
+        message: '上报异常成功'
+      })
+      router.back()
+    }catch (err){
+      AlertDialog.show({
+        message:JSON.stringify(err)
+      })
+    }
+  }
   @Builder getCardContent() {
     ForEach(this.exceptErrorList, (name: string, index: number) => {
       this.getSingleItem({ name, index } as ExceptionItemClass)
@@ -80,7 +113,7 @@ struct ExceptionReport {
         CardItem({ leftTitle: '异常时间', rightText: this.exceptionForm.exceptionTime || '请选择', onRightClick: () => {
           this.dateTimePicker.open()
         } })
-        CardItem({ leftTitle: '上报位置', rightText: '请选择', onRightClick:() => {
+        CardItem({ leftTitle: '上报位置', rightText: this.exceptionForm.exceptionPlace || '请选择', onRightClick:() => {
           router.pushUrl({
             url: 'pages/selectLocation/SelectLocation'
           })
@@ -90,10 +123,14 @@ struct ExceptionReport {
         } })
         CardItem({ leftTitle: '异常描述', rightText: '', showRightIcon: false, showBottomBorder: false })
         TextArea({
-          placeholder: '请输入异常描述'
+          placeholder: '请输入异常描述',
+          text: this.exceptionForm.exceptionDescribe!
+        }).height(130).borderRadius(8).placeholderColor($r('app.color.text_secondary')).fontSize(14).onChange((value) => {
+          if(value.length <= this.maxNumber) {
+            this.exceptionForm.exceptionDescribe = value
+          }
         })
-          .height(130).borderRadius(8).placeholderColor($r('app.color.text_secondary')).fontSize(14)
-        Text(`0/50`)
+        Text(`${this.exceptionForm.exceptionDescribe?.length || 0}/${this.maxNumber}`)
           .margin({
             top: -30
           })
@@ -111,7 +148,13 @@ struct ExceptionReport {
       }
 
       Row() {
-        Button("提交").height(50).width(207).backgroundColor($r('app.color.primary_disabled'))
+        Button("提交").height(50).width(207).backgroundColor(
+          this.getBtnEnable() ?   $r('app.color.primary') :
+          $r('app.color.primary_disabled')).
+        enabled(this.getBtnEnable())
+          .onClick(() => {
+            this.btnReport()
+          })
       }
       .position({
         y: '100%'
