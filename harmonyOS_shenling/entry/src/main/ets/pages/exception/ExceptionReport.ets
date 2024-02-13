@@ -69,7 +69,12 @@ struct ExceptionReport {
       promptAction.showToast({
         message: '上报异常成功'
       })
-      router.back()
+      router.back({
+        url: 'pages/taskDetail/TaskDetail',
+        params: {
+          addExcept: true
+        }
+      })
     }catch (err){
       AlertDialog.show({
         message:JSON.stringify(err)

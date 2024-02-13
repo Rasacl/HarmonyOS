@@ -1,6 +1,6 @@
 import { Loading, NavBar, ToggleCard, Upload, UploadClass } from '../../components'
 import router from '@ohos.router'
-import { CommonRouterParams, DeliverParamsTypeModel, PickUpParamsModel, TaskDetailInfo, TaskDetailInfoModel, TaskTypeEnum } from '../../models'
+import { CommonRouterParams, DeliverParamsTypeModel, ExceptionList, PickUpParamsModel, TaskDetailInfo, TaskDetailInfoModel, TaskTypeEnum } from '../../models'
 import { deliver, getTaskDetail, pickUp } from '../../api'
 import promptAction from '@ohos.promptAction'
 
@@ -31,10 +31,14 @@ struct TaskDetail {
   @Watch('updateCertificatePics')
   certificateClass: UploadClass = new UploadClass()
   scroll:Scroller = new Scroller()  // 属于外力控制
-  aboutToAppear(){
-    const params = router.getParams() as CommonRouterParams
+  async onPageShow() {
+    const params = router.getParams()  as CommonRouterParams
     if(params && params.id){
       this.getTaskDetail(params.id)
+    }
+    if(params &&  params.addExcept) {
+      const result =  await getTaskDetail(this.taskDetailData.id)
+      this.taskDetailData.exceptionList = result.exceptionList
     }
   }
   updateCargoPickUp () {
@@ -308,7 +312,44 @@ struct TaskDetail {
     .position({ y: '100%' })
     .translate({ y: -70 })
   }
+  // 获取异常信息
+  @Builder
+  getExceptionContent() {
+    ForEach(this.taskDetailData.exceptionList, (item: ExceptionList) => {
+      Row() {
+        Column() {
+          Row() {
+            Text("上报时间").fontSize(14).fontColor($r('app.color.text_primary'))
+            Text(item.exceptionTime).margin({ left: 20 }).fontColor($r('app.color.text_secondary'))
+          }.height(50).alignItems(VerticalAlign.Center).width('100%')
 
+          Row() {
+            Text("异常类型").fontSize(14).fontColor($r('app.color.text_primary'))
+            Text(item.exceptionType).margin({ left: 20 }).fontColor($r('app.color.text_secondary'))
+          }.height(50).alignItems(VerticalAlign.Center).width('100%')
+
+          Row() {
+            Text("处理结果").fontSize(14).fontColor($r('app.color.text_primary'))
+            Text("继续运输").margin({ left: 20 }).fontColor($r('app.color.text_secondary'))
+          }.height(50).alignItems(VerticalAlign.Center).width('100%')
+        }
+        // 跳转到详情
+        Image($r("app.media.ic_btn_more")).width(24).height(24).onClick(() => {
+          router.pushUrl({
+            url: "pages/exception/ExceptionReportDetail",
+            params: {
+              formData: item
+            }
+          })
+        })
+      }
+      .width('100%')
+      .padding({ left: 15, right: 15 })
+      .alignItems(VerticalAlign.Center)
+      .justifyContent(FlexAlign.SpaceBetween)
+
+    })
+  }
   build() {
     Column() {
       NavBar({ title: '任务详情' })
@@ -324,6 +365,11 @@ struct TaskDetail {
           }
           ToggleCard({title:'运输路线'}){
             this.getTransLineContent()
+          }
+          if (this.taskDetailData.exceptionList?.length > 0) {
+            ToggleCard({ title: '异常信息' }) {
+              this.getExceptionContent()
+            }
           }
           // 提货时显示提货照片
           if(this.taskDetailData.status === TaskTypeEnum.Waiting || this.taskDetailData.status === TaskTypeEnum.Delivered) {
