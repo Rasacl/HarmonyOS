@@ -3,6 +3,7 @@ import router from '@ohos.router'
 import { CommonRouterParams, DeliverParamsTypeModel, ExceptionList, PickUpParamsModel, TaskDetailInfo, TaskDetailInfoModel, TaskTypeEnum } from '../../models'
 import { deliver, getTaskDetail, pickUp } from '../../api'
 import promptAction from '@ohos.promptAction'
+import call from '@ohos.telephony.call'
 
 @Entry
 @Component
@@ -116,7 +117,9 @@ struct TaskDetail {
       Row() {
         Text(item.value).fontSize(14).fontColor($r('app.color.text_secondary'))
         if (item.icon) {
-          Image(item.icon).width(24).height(24)
+          Image(item.icon).width(24).height(24).onClick(() => {
+            item.iconClick?.()
+          })
         }
       }
     }.justifyContent(FlexAlign.SpaceBetween).width('100%').margin({
@@ -166,7 +169,10 @@ struct TaskDetail {
     this.getBaseContentItem({
       title: '联系电话',
       value: this.taskDetailData.startHandoverPhone,
-      icon: $r('app.media.ic_phone')
+      icon: $r('app.media.ic_phone'),
+      iconClick:() => {
+        call.makeCall(this.taskDetailData.startHandoverPhone)
+      }
     })
     this.getBaseContentItem({
       title: '提货时间',
@@ -417,4 +423,5 @@ class BaseBuilderClass {
   title: string = ""
   value: string = ""
   icon?: ResourceStr = ""
+  iconClick?: () => void = () => {}
 }
